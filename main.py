@@ -42,7 +42,7 @@ def select_output_directory():
         output_label.config(text=f"Output Directory: {output_file_path}")
 
 
-def run(read_data, compare_data, save_to_excel):
+def run(read_data, compare_data, save_to_excel, frame_name):
     if not result_file_path or not target_file_path or not output_file_path:
         messagebox.showerror("Error", "Please select all files (result, target, and output directory)")
         return
@@ -55,7 +55,7 @@ def run(read_data, compare_data, save_to_excel):
         try:
             csv_df, excel_df_filtered = read_data(target_file_path, result_file_path)
             results_df, rois = compare_data(csv_df, excel_df_filtered)
-            output_file = os.path.join(output_file_path, 'Results.xlsx')
+            output_file = os.path.join(output_file_path, f'{frame_name}_Results.xlsx')
             save_to_excel(results_df, output_file, rois)
             if progress_bar:
                 progress_bar.stop()
@@ -69,6 +69,7 @@ def run(read_data, compare_data, save_to_excel):
             messagebox.showerror("Error", str(e))
 
     threading.Thread(target=task).start()
+
 
 
 # UI 구성
@@ -124,24 +125,26 @@ def create_ui():
         compare_data = load_module("T1.compare_data", "compare_data")
         save_to_excel = load_module("T1.save_to_excel", "save_to_excel")
 
-        result_label = ttk.Label(frame, text="No file selected")
-        result_label.grid(row=2, column=0, pady=5)
-        ttk.Button(frame, text="Select the Result File\n    (정답지 Excel)", command=select_result_file,
+        ttk.Button(frame, text="Select the Result File\n(정답지 Excel)", command=select_result_file,
                    width=30).grid(row=1, column=0, pady=5)
 
-        target_label = ttk.Label(frame, text="No file selected")
-        target_label.grid(row=5, column=0, pady=5)
-        ttk.Button(frame, text="Select the Analysis File\n    (분석된 CSV)", command=select_target_file,
+        result_label = ttk.Label(frame, text="No file selected")
+        result_label.grid(row=2, column=0, pady=10)
+
+        ttk.Button(frame, text="Select the Analysis File\n(분석된 CSV)", command=select_target_file,
                    width=30).grid(row=3, column=0, pady=5)
 
-        output_label = ttk.Label(frame, text="No directory selected")
-        output_label.grid(row=8, column=0, pady=5)
-        ttk.Button(frame, text="Select the Output Directory", command=select_output_directory,
-                   width=30).grid(row=4, column=0, pady=5)
+        target_label = ttk.Label(frame, text="No file selected")
+        target_label.grid(row=4, column=0, pady=10)
 
-        ttk.Button(frame, text="Run", command=lambda: run(read_data, compare_data, save_to_excel), width=30).grid(row=6,
-                                                                                                                  column=0,
-                                                                                                                  pady=10)
+        ttk.Button(frame, text="Select the Output Directory", command=select_output_directory,
+                   width=30).grid(row=5, column=0, pady=5)
+
+        output_label = ttk.Label(frame, text="No directory selected")
+        output_label.grid(row=6, column=0, pady=10)
+
+        ttk.Button(frame, text="Run", command=lambda: run(read_data, compare_data, save_to_excel, "T1"), width=30).grid(
+            row=7, column=0, pady=10)
 
         progress_bar = ttk.Progressbar(frame, mode='indeterminate')
 
@@ -159,24 +162,26 @@ def create_ui():
         compare_data = load_module("T2.compare_data", "compare_data")
         save_to_excel = load_module("T2.save_to_excel", "save_to_excel")
 
-        result_label = ttk.Label(frame, text="No file selected")
-        result_label.grid(row=2, column=0, pady=5)
-        ttk.Button(frame, text="Select the Result File\n    (정답지 Excel)", command=select_result_file,
+        ttk.Button(frame, text="Select the Result File\n(정답지 Excel)", command=select_result_file,
                    width=30).grid(row=1, column=0, pady=5)
 
-        target_label = ttk.Label(frame, text="No file selected")
-        target_label.grid(row=5, column=0, pady=5)
-        ttk.Button(frame, text="Select the Analysis File\n    (분석된 CSV)", command=select_target_file,
+        result_label = ttk.Label(frame, text="No file selected")
+        result_label.grid(row=2, column=0, pady=10)
+
+        ttk.Button(frame, text="Select the Analysis File\n(분석된 CSV)", command=select_target_file,
                    width=30).grid(row=3, column=0, pady=5)
 
-        output_label = ttk.Label(frame, text="No directory selected")
-        output_label.grid(row=8, column=0, pady=5)
-        ttk.Button(frame, text="Select the Output Directory", command=select_output_directory,
-                   width=30).grid(row=4, column=0, pady=5)
+        target_label = ttk.Label(frame, text="No file selected")
+        target_label.grid(row=4, column=0, pady=10)
 
-        ttk.Button(frame, text="Run", command=lambda: run(read_data, compare_data, save_to_excel), width=30).grid(row=6,
-                                                                                                                  column=0,
-                                                                                                                  pady=10)
+        ttk.Button(frame, text="Select the Output Directory", command=select_output_directory,
+                   width=30).grid(row=5, column=0, pady=5)
+
+        output_label = ttk.Label(frame, text="No directory selected")
+        output_label.grid(row=6, column=0, pady=10)
+
+        ttk.Button(frame, text="Run", command=lambda: run(read_data, compare_data, save_to_excel, "T2"), width=30).grid(
+            row=7, column=0, pady=10)
 
         progress_bar = ttk.Progressbar(frame, mode='indeterminate')
 
