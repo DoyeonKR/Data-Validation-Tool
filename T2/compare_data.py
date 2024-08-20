@@ -74,6 +74,7 @@ def compare_data(csv_df, excel_df_filtered):
                 else:
                     min_value = roi_matches['Engine_raw_vol_min'].values[0]
                     max_value = roi_matches['Engine_raw_vol_max'].values[0]
+                    mean_value = roi_matches['Engine_raw_vol_mean'].values[0]
 
                     if min_value <= volume_value <= max_value:
                         roi_result = 'Pass'
@@ -85,9 +86,15 @@ def compare_data(csv_df, excel_df_filtered):
                     patient_result[f'{roi} min'] = min_value
                     patient_result[f'{roi} system'] = volume_value
                     patient_result[f'{roi} max'] = max_value
+                    patient_result[f'{roi} Differ'] = volume_value - mean_value
 
             patient_result['Overall Result'] = overall_result
 
     results_df = pd.DataFrame.from_dict(results_dict, orient='index')
+    for roi in rois:
+        mean_col = f'{roi} mean'
+        if mean_col in results_df.columns:
+            results_df.drop(columns=[mean_col], inplace=True)
+
     return results_df, rois
 
