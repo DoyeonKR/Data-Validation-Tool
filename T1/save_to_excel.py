@@ -17,7 +17,7 @@ def save_to_excel(results_df, output_excel_file_path, rois):
 
         # 초록색으로 컬러 설정
         green_fill = PatternFill(start_color='D0EA00', end_color='00FF00', fill_type='solid')
-        pass_font = Font(color='00C300', bold=True)
+        pass_font = Font(color='41d173', bold=True)
         fail_font = Font(color='FF0000', bold=True)
         bold_side = Side(border_style='medium', color='000000')
 

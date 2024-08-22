@@ -53,7 +53,7 @@ def run(read_data, compare_data, save_to_excel, frame_name):
                 progress_bar.stop()
                 progress_bar.grid_remove()
             messagebox.showinfo("Success",
-                                f"Results have been saved to {output_file}\n\nNew 'Difference' column added for each ROI.")
+                                f"Results have been saved to {output_file}")
         except Exception as e:
             if progress_bar:
                 progress_bar.stop()
@@ -111,10 +111,8 @@ def create_ui(root):
     root.resizable(False, False)
 
     # 스타일 설정
-    style = ttk.Style(root)
-    style.configure('T1.TButton', background='#87CEFA', foreground='black')
-    style.map('T1.TButton',
-              background=[('active', '#1E90FF')])
+    style = ttk.Style()
+
 
     # Grid 설정
     root.grid_rowconfigure(1, weight=0)
@@ -129,13 +127,13 @@ def create_ui(root):
     t1_button = ttk.Button(top_frame, text="T1", style='T1.TButton', command=lambda: setup_t1_frame(t1_frame))
     t1_button.grid(row=0, column=0, padx=5, pady=5, sticky="ew")
 
-    t2_button = ttk.Button(top_frame, text="T2", command=lambda: setup_t2_frame(t2_frame))
+    t2_button = ttk.Button(top_frame, text="T2", style='T1.TButton', command=lambda: setup_t2_frame(t2_frame))
     t2_button.grid(row=0, column=1, padx=5, pady=5, sticky="ew")
 
-    tau_button = ttk.Button(top_frame, text="Tau", command=lambda: setup_tau_frame(tau_frame))
+    tau_button = ttk.Button(top_frame, text="Tau", style='T1.TButton', command=lambda: setup_tau_frame(tau_frame))
     tau_button.grid(row=0, column=2, padx=5, pady=5, sticky="ew")
 
-    amyloid_button = ttk.Button(top_frame, text="Amyloid", command=lambda: setup_amyloid_frame(amyloid_frame))
+    amyloid_button = ttk.Button(top_frame, text="Amyloid", style='T1.TButton', command=lambda: setup_amyloid_frame(amyloid_frame))
     amyloid_button.grid(row=0, column=3, padx=5, pady=5, sticky="ew")
 
     # 구분선 추가 (고정)

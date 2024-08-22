@@ -4,6 +4,12 @@ from openpyxl import Workbook
 from openpyxl.styles import PatternFill, Font, Border, Side, Alignment
 
 def save_to_excel(results_df, output_excel_file_path, rois):
+    # 'Overall Result' 컬럼을 원하는 위치로 이동 (예: Patient ID 뒤에 위치시키기)
+    if 'Overall Result' in results_df.columns:
+        overall_col = results_df.pop('Overall Result')
+        insert_position = results_df.columns.get_loc('Patient ID') + 1
+        results_df.insert(insert_position, 'Overall Result', overall_col)
+
     with pd.ExcelWriter(output_excel_file_path, engine='openpyxl') as writer:
         results_df.to_excel(writer, index=False, sheet_name='Results')
         workbook = writer.book
@@ -26,7 +32,7 @@ def save_to_excel(results_df, output_excel_file_path, rois):
             cell.fill = green_fill
 
             # 전체 결과 컬럼에 대한 스타일 적용
-            overall_result_cell = worksheet.cell(row=row, column=len(results_df.columns))
+            overall_result_cell = worksheet.cell(row=row, column=insert_position + 1)
             if overall_result_cell.value == 'Pass':
                 overall_result_cell.font = pass_font
             elif overall_result_cell.value == 'Fail':
