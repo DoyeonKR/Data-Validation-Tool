@@ -49,7 +49,7 @@ def save_to_excel(results_df, output_excel_file_path, rois):
             min_col = results_df.columns.get_loc(f'{roi} min') + 1
             system_col = results_df.columns.get_loc(f'{roi} system') + 1
             max_col = results_df.columns.get_loc(f'{roi} max') + 1
-            differ_col = results_df.columns.get_loc(f'{roi} Differ') + 1  # 새로 추가된 Differ 열 위치
+            differ_col = results_df.columns.get_loc(f'{roi} Differ') + 1
 
             for row in range(2, len(results_df) + 2):
                 worksheet.cell(row=row, column=result_col).border = Border(left=bold_side, top=bold_side, bottom=bold_side)

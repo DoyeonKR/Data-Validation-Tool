@@ -11,19 +11,27 @@ def normalize_id(id_value):
 
 def compare_data(csv_df, excel_df_filtered):
     rois = [
-        'Intracranial Volume(ICV)_Total Volume(Raw)',
-        'Hippocampus_Total Volume(Raw)',
-        'Hippocampus_Left Volume(Raw)',
-        'Hippocampus_Right Volume(Raw)',
-        'Inferior Lateral Ventricle_Total Volume(Raw)',
-        'Inferior Lateral Ventricle_Left Volume(Raw)',
-        'Inferior Lateral Ventricle_Right Volume(Raw)',
-        'Lateral Ventricle_Total Volume(Raw)',
-        'Lateral Ventricle_Left Volume(Raw)',
-        'Lateral Ventricle_Right Volume(Raw)',
-        'Cortical Grey Matter_Total Volume(Raw)',
-        'Cortical Grey Matter_Left Volume(Raw)',
-        'Cortical Grey Matter_Right Volume(Raw)'
+        'Total Regions of Interest for Amyloid PET SUVR',
+        'Left Regions of Interest for Amyloid PET SUVR',
+        'Right Regions of Interest for Amyloid PET SUVR',
+        'Total Frontal Target Region SUVR',
+        'Left Frontal Target Region SUVR',
+        'Right Frontal Target Region SUVR',
+        'Total Lateral Parietal Target Region SUVR',
+        'Left Lateral Parietal Target Region SUVR',
+        'Right Lateral Parietal Target Region SUVR',
+        'Total Precuneus SUVR',
+        'Left Precuneus SUVR',
+        'Right Precuneus SUVR',
+        'Total Lateral Temporal Target Region SUVR',
+        'Left Lateral Temporal Target Region SUVR',
+        'Right Lateral Temporal Target Region SUVR',
+        'Total Cingulate Cortex SUVR',
+        'Left Cingulate Cortex SUVR',
+        'Right Cingulate Cortex SUVR',
+        'Total Striatum SUVR',
+        'Left Striatum SUVR',
+        'Right Striatum SUVR'
     ]
 
     results_dict = {}

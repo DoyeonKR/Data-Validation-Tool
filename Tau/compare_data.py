@@ -11,19 +11,12 @@ def normalize_id(id_value):
 
 def compare_data(csv_df, excel_df_filtered):
     rois = [
-        'Intracranial Volume(ICV)_Total Volume(Raw)',
-        'Hippocampus_Total Volume(Raw)',
-        'Hippocampus_Left Volume(Raw)',
-        'Hippocampus_Right Volume(Raw)',
-        'Inferior Lateral Ventricle_Total Volume(Raw)',
-        'Inferior Lateral Ventricle_Left Volume(Raw)',
-        'Inferior Lateral Ventricle_Right Volume(Raw)',
-        'Lateral Ventricle_Total Volume(Raw)',
-        'Lateral Ventricle_Left Volume(Raw)',
-        'Lateral Ventricle_Right Volume(Raw)',
-        'Cortical Grey Matter_Total Volume(Raw)',
-        'Cortical Grey Matter_Left Volume(Raw)',
-        'Cortical Grey Matter_Right Volume(Raw)'
+        'Total Neocortical Region SUVR',
+        'Left Neocortical Region SUVR',
+        'Right Neocortical Region SUVR',
+        'Total Frontal Region SUVR',
+        'Left Frontal Region SUVR',
+        'Right Frontal Region SUVR',
     ]
 
     results_dict = {}
