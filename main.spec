@@ -6,7 +6,7 @@ a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[('T1', 'T1'), ('T2', 'T2')],
+    datas=[('T1', 'T1'), ('T2', 'T2'), ('Tau', 'Tau'), ('Amyloid', 'Amyloid')],
     hiddenimports=['pandas'],
     hookspath=[],
     hooksconfig={},
