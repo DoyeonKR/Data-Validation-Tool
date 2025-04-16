@@ -97,7 +97,6 @@ for _, key in unique_keys.iterrows():
                 })
 
 
-
             # 수치형 항목 비교
             else:
                 val_csv = row.get(feature, None)
