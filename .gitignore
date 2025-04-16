@@ -1,0 +1,10 @@
+
+
+
+
+*.venv
+*.idea
+*.dist
+*.build
+*.vs
+
