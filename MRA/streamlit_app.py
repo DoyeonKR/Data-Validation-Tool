@@ -2,9 +2,10 @@ import streamlit as st
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
+import matplotlib.font_manager as fm
 
 # 1. 데이터 불러오기
-df = pd.read_excel("비교결과_컬러.xlsx")
+df = pd.read_excel("비교결과_컬러.xlsx").fillna('-')
 
 # 2. 데이터 타입 변환 (에러 방지)
 df['Value (CSV)'] = df['Value (CSV)'].astype(str)
@@ -31,22 +32,48 @@ if selected_patient == '전체':
 else:
     filtered_df = df[(df['Patient ID'] == selected_patient) & (df['Result'].isin(selected_result))]
 
-# 6. 결과 요약 표
+# ✅ 6. NaN을 보기 좋게 "-"로 치환
+filtered_df = filtered_df.fillna('-')  #
+
+
+# 7. 결과 요약 표
 st.subheader("📊 결과 요약")
 summary = filtered_df['Result'].value_counts().reset_index()
 summary.columns = ['결과', '건수']
 st.table(summary)
 
-# # 7. 요약 차트 시각화
-# st.subheader("📈 결과 분포 차트")
-# fig, ax = plt.subplots()
-# ax.bar(summary['Result'], summary['Quantity'], color=['#CCFFCC' if r == 'Pass' else '#FFCCCC' if r == 'Fail' else '#201b1b' for r in summary['Result']])
-# ax.set_ylabel("Quantity")
-# ax.set_xlabel("Result")
-# ax.set_title("Summary")
-# st.pyplot(fig)
+# 8. 요약 차트 시각화
+st.subheader("📈 결과 분포 차트")
 
-# 8. 셀 색상 스타일링 함수
+plt.rcParams['font.family'] = 'Malgun Gothic'  # ✅ 한글 폰트 설정
+plt.rcParams['axes.unicode_minus'] = False
+
+color_map = {
+    'Pass': '#8BC34A',
+    'Fail': '#FF6F61',
+    'NoMatch': '#B0BEC5'
+}
+
+fig, ax = plt.subplots(figsize=(6, 2))
+bars = ax.bar(
+    summary['결과'],
+    summary['건수'],
+    color=[color_map.get(r, '#CCCCCC') for r in summary['결과']]
+)
+
+ax.set_ylabel("건수", fontsize=12)
+ax.set_xlabel("결과", fontsize=12)
+ax.set_title("결과 분포 요약", fontsize=14, fontweight='bold')
+ax.grid(axis='y', linestyle='--', alpha=0.5)
+ax.set_facecolor('white')
+
+for bar in bars:
+    yval = bar.get_height()
+    ax.text(bar.get_x() + bar.get_width() / 2, yval + 0.2, f'{int(yval)}', ha='center', va='bottom', fontsize=10)
+
+st.pyplot(fig)
+
+# 9. 셀 색상 스타일링 함수
 def style_result(val):
     if val == 'Pass':
         return 'background-color: #28cb2f; font-weight: bold; text-align: center;'
@@ -62,11 +89,11 @@ styled_df = filtered_df.style.applymap(style_result, subset=['Result'])\
         {'selector': 'td', 'props': [('text-align', 'center')]}
     ])
 
-# 9. 스타일링된 테이블 출력
+# 10. 스타일링된 테이블 출력
 st.subheader("📋 상세 비교 결과")
 st.markdown(styled_df.to_html(index=False), unsafe_allow_html=True)
 
-# 10. 엑셀 다운로드
+# 11. 엑셀 다운로드 (NaN → "-" 반영됨)
 excel_buffer = io.BytesIO()
 filtered_df.to_excel(excel_buffer, index=False, engine='openpyxl')
 excel_buffer.seek(0)
