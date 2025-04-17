@@ -61,7 +61,7 @@ for _, key in unique_keys.iterrows():
             results.append({
                 'Patient ID': session_id,
                 'Aneurysm Index': aneurysm_idx,
-                'Feature': r['roi_product_name'],
+                'ROI Name': r['roi_product_name'],
                 'Value (CSV)': None,
                 'Min (XLSX)': r['Engine_raw_vol_min'],
                 'Max (XLSX)': r['Engine_raw_vol_max'],
@@ -89,7 +89,7 @@ for _, key in unique_keys.iterrows():
                 results.append({
                     'Patient ID': session_id,
                     'Aneurysm Index': aneurysm_idx,
-                    'Feature': feature,
+                    'ROI Name': feature,
                     'Value (CSV)': val_csv,
                     'Min (XLSX)': val_ref,
                     'Max (XLSX)': None,
@@ -113,7 +113,7 @@ for _, key in unique_keys.iterrows():
                 results.append({
                     'Patient ID': session_id,
                     'Aneurysm Index': aneurysm_idx,
-                    'Feature': feature,
+                    'ROI Name': feature,
                     'Value (CSV)': val_csv,
                     'Min (XLSX)': min_val,
                     'Max (XLSX)': max_val,
@@ -153,8 +153,8 @@ for r_idx, row in enumerate(dataframe_to_rows(df_result, index=False, header=Tru
                 cell.fill = fill_fail
 
 # 9. 엑셀 저장 (중간 결과 저장 안함)
-wb.save('비교결과_컬러.xlsx')
-print("✅ 스타일이 적용된 최종 결과가 '비교결과_컬러.xlsx'로 저장되었습니다.")
+wb.save('MRA_Validation.xlsx')
+print("✅ 스타일이 적용된 최종 결과가 MRA_Validaion 로 저장되었습니다.")
 
 
 # 스타일 함수 정의
