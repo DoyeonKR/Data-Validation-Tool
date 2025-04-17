@@ -2,22 +2,16 @@ import streamlit as st
 import pandas as pd
 import io
 import matplotlib.pyplot as plt
-import matplotlib.font_manager as fm
 
-# 1. 데이터 불러오기
-df = pd.read_excel("비교결과_컬러.xlsx").fillna('-')
+# 1. 데이터 불러오기 + 결측값 처리
+df = pd.read_excel("MRA_Validation.xlsx", dtype=str).fillna('-')
 
-# 2. 데이터 타입 변환 (에러 방지)
-df['Value (CSV)'] = df['Value (CSV)'].astype(str)
-df['Min (XLSX)'] = df['Min (XLSX)'].astype(str)
-df['Max (XLSX)'] = df['Max (XLSX)'].astype(str)
-
-# 3. 페이지 기본 설정
+# 2. 페이지 기본 설정
 st.set_page_config(page_title="MRA 전체 대시보드", layout="wide")
 st.title("🧠 SCALE MRA Engine Validation")
 st.markdown("MRA Validation 결과를 환자별, 결과별로 분석할 수 있습니다.")
 
-# 4. 필터 UI
+# 3. 필터 UI
 patient_options = ['전체'] + sorted(df['Patient ID'].unique().tolist())
 col1, col2 = st.columns(2)
 
@@ -26,26 +20,32 @@ with col1:
 with col2:
     selected_result = st.multiselect("🎯 결과 필터", ['Pass', 'Fail', 'NoMatch'], default=['Pass', 'Fail', 'NoMatch'])
 
-# 5. 필터링
+# 4. 필터링
 if selected_patient == '전체':
     filtered_df = df[df['Result'].isin(selected_result)]
 else:
     filtered_df = df[(df['Patient ID'] == selected_patient) & (df['Result'].isin(selected_result))]
 
-# ✅ 6. NaN을 보기 좋게 "-"로 치환
-filtered_df = filtered_df.fillna('-')  #
-
-
-# 7. 결과 요약 표
+# 5. 결과 요약 표
 st.subheader("📊 결과 요약")
 summary = filtered_df['Result'].value_counts().reset_index()
 summary.columns = ['결과', '건수']
 st.table(summary)
 
-# 8. 요약 차트 시각화
+# ✅ 5-1. Pass Rate 계산 및 표시
+total = summary['건수'].sum()
+pass_count = summary.loc[summary['결과'] == 'Pass', '건수'].sum()
+
+if total > 0:
+    pass_rate = (pass_count / total) * 100
+    st.metric(label="✅ Pass Rate", value=f"{pass_rate:.2f} %")
+else:
+    st.warning("표시할 결과가 없습니다.")
+
+# 6. 요약 차트 시각화
 st.subheader("📈 결과 분포 차트")
 
-plt.rcParams['font.family'] = 'Malgun Gothic'  # ✅ 한글 폰트 설정
+plt.rcParams['font.family'] = 'Malgun Gothic'
 plt.rcParams['axes.unicode_minus'] = False
 
 color_map = {
@@ -73,7 +73,7 @@ for bar in bars:
 
 st.pyplot(fig)
 
-# 9. 셀 색상 스타일링 함수
+# 7. 셀 색상 스타일링 함수
 def style_result(val):
     if val == 'Pass':
         return 'background-color: #28cb2f; font-weight: bold; text-align: center;'
@@ -89,11 +89,11 @@ styled_df = filtered_df.style.applymap(style_result, subset=['Result'])\
         {'selector': 'td', 'props': [('text-align', 'center')]}
     ])
 
-# 10. 스타일링된 테이블 출력
+# 8. 스타일링된 테이블 출력
 st.subheader("📋 상세 비교 결과")
 st.markdown(styled_df.to_html(index=False), unsafe_allow_html=True)
 
-# 11. 엑셀 다운로드 (NaN → "-" 반영됨)
+# 9. 엑셀 다운로드 (NaN → "-" 처리된 상태)
 excel_buffer = io.BytesIO()
 filtered_df.to_excel(excel_buffer, index=False, engine='openpyxl')
 excel_buffer.seek(0)
