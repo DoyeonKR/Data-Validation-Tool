@@ -157,21 +157,3 @@ wb.save('MRA_Validation.xlsx')
 print("✅ 스타일이 적용된 최종 결과가 MRA_Validaion 로 저장되었습니다.")
 
 
-# 스타일 함수 정의
-def highlight_result(val):
-    if val == 'Pass':
-        return 'background-color: #CCFFCC; font-weight: bold'  # 연두색
-    elif val == 'Fail':
-        return 'background-color: #FFCCCC; font-weight: bold'  # 핑크색
-    elif val == 'NoMatch':
-        return 'background-color: #F0F0F0; font-weight: bold'  # 회색
-    return ''
-
-# 스타일 적용
-styled = df_result.style.applymap(highlight_result, subset=['Result'])
-
-# HTML 저장
-styled.to_html('비교결과.html', index=False)
-
-print("📄 HTML 리포트가 '비교결과.html'로 저장되었습니다!")
-
