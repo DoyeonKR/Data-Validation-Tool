@@ -106,7 +106,7 @@ with col_chart1:
 
 with col_chart2:
     fig_pie, ax_pie = plt.subplots(figsize=(4.5, 3.5))
-    ax_pie.pie(summary['건수'], labels=summary['결과'], autopct='%1.1f%%',
+    ax_pie.pie(summary['Quantity'], labels=summary['Result'], autopct='%1.1f%%',
                colors=[color_map.get(r, '#CCCCCC') for r in summary['결과']])
     ax_pie.set_title("Result Rate (Pie)", fontsize=13)
     st.pyplot(fig_pie)
