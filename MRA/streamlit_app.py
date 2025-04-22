@@ -96,23 +96,27 @@ fontsize_label = 11
 fontsize_tick = 10
 
 with col1:
-    fig_bar, ax_bar = plt.subplots(figsize=(6, 4.5))
+    fig_bar, ax_bar = plt.subplots(figsize=(5, 3))
     bars = ax_bar.bar(
         summary['결과'],
         summary['건수'],
+        width=0.4,  # ✅ 얇은 막대
         color=[color_map.get(r, '#CCCCCC') for r in summary['결과']]
     )
-    ax_bar.set_title("Result Count", fontsize=fontsize_title)
-    ax_bar.set_ylabel("Count", fontsize=fontsize_label)
+    ax_bar.set_ylabel("Count", fontsize=11)
+    ax_bar.set_title("Result Chart (Bar)", fontsize=13)
     ax_bar.grid(axis='y', linestyle='--', alpha=0.4)
-    ax_bar.set_facecolor('white')
 
+    # ✅ 텍스트 표시
     for bar in bars:
         yval = bar.get_height()
-        ax_bar.text(
-            bar.get_x() + bar.get_width() / 2, yval + 0.5,
-            f'{int(yval)}', ha='center', va='bottom', fontsize=fontsize_tick
-        )
+        ax_bar.text(bar.get_x() + bar.get_width() / 2, yval + 0.2, f'{int(yval)}',
+                    ha='center', va='bottom', fontsize=10)
+
+    # ✅ x축 범위 조정 (값이 적을 때만)
+    if len(summary) == 1:
+        ax_bar.set_xlim(-0.5, 1.5)
+
     st.pyplot(fig_bar)
 
 with col2:
