@@ -76,9 +76,12 @@ else:
     st.warning("❗ 표시할 결과가 없습니다.")
 
 # ======== 6. 결과 분포 차트 ========
-st.subheader("📈 결과 분포 (Bar + Pie)")
+st.subheader("📈 Result Distribution")
 
-plt.rcParams['font.family'] = 'Malgun Gothic'
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+
+plt.rcParams['font.family'] = 'DejaVu Sans'
 plt.rcParams['axes.unicode_minus'] = False
 
 color_map = {
@@ -87,29 +90,71 @@ color_map = {
     'NoMatch': '#B0BEC5'
 }
 
-col_chart1, col_chart2 = st.columns(2)
+col1, col2 = st.columns([1, 1])
+fontsize_title = 13
+fontsize_label = 11
+fontsize_tick = 10
 
-with col_chart1:
-    fig_bar, ax_bar = plt.subplots(figsize=(5, 3))
+with col1:
+    fig_bar, ax_bar = plt.subplots(figsize=(6, 4.5))
     bars = ax_bar.bar(
         summary['결과'],
         summary['건수'],
         color=[color_map.get(r, '#CCCCCC') for r in summary['결과']]
     )
-    ax_bar.set_ylabel("건수", fontsize=11)
-    ax_bar.set_title("Result Chart (Bar)", fontsize=13)
+    ax_bar.set_title("Result Count", fontsize=fontsize_title)
+    ax_bar.set_ylabel("Count", fontsize=fontsize_label)
     ax_bar.grid(axis='y', linestyle='--', alpha=0.4)
+    ax_bar.set_facecolor('white')
+
     for bar in bars:
         yval = bar.get_height()
-        ax_bar.text(bar.get_x() + bar.get_width()/2, yval + 0.2, f'{int(yval)}', ha='center', va='bottom', fontsize=10)
+        ax_bar.text(
+            bar.get_x() + bar.get_width() / 2, yval + 0.5,
+            f'{int(yval)}', ha='center', va='bottom', fontsize=fontsize_tick
+        )
     st.pyplot(fig_bar)
 
-with col_chart2:
-    fig_pie, ax_pie = plt.subplots(figsize=(4.5, 3.5))
-    ax_pie.pie(summary['건수'], labels=summary['결과'], autopct='%1.1f%%',
-               colors=[color_map.get(r, '#CCCCCC') for r in summary['결과']])
-    ax_pie.set_title("Result Rate (Pie)", fontsize=13)
+with col2:
+    fig_pie, ax_pie = plt.subplots(figsize=(6, 4.5))
+    wedges, texts, autotexts = ax_pie.pie(
+        summary['건수'],
+        labels=None,
+        autopct='%1.1f%%',
+        startangle=90,
+        counterclock=False,
+        colors=[color_map.get(r, '#CCCCCC') for r in summary['결과']],
+        textprops={'fontsize': fontsize_tick},
+        pctdistance=0.7
+    )
+
+    # ✅ 가운데 도넛
+    centre_circle = plt.Circle((0, 0), 0.5, fc='white')
+    fig_pie.gca().add_artist(centre_circle)
+    ax_pie.axis('equal')
+    ax_pie.set_title("Result Rate", fontsize=fontsize_title)
+
+    # ✅ 범례 텍스트를 비율로 변경
+    total_count = summary['건수'].sum()
+    legend_labels = [
+        f"{label} : {round((count / total_count) * 100, 1)}%"
+        for label, count in zip(summary['결과'], summary['건수'])
+    ]
+    legend_handles = [
+        mpatches.Patch(color=color_map.get(label, '#CCCCCC'), label=legend)
+        for label, legend in zip(summary['결과'], legend_labels)
+    ]
+
+    ax_pie.legend(
+        handles=legend_handles,
+        loc='lower left',
+        bbox_to_anchor=(-0.4, -0.15),
+        fontsize=9,
+        frameon=False
+    )
+
     st.pyplot(fig_pie)
+
 
 # ======== 7. 셀 스타일 ========
 style_map = {
