@@ -53,6 +53,10 @@ summary = filtered_df['Result'].value_counts().reset_index()
 summary.columns = ['결과', '건수']
 summary.index += 1
 
+# 총 데이터 수
+unique_patients = filtered_df['Patient ID'].nunique()
+st.markdown(f"**🧍 총 비교 환자 수: `{unique_patients}명`**")
+
 st.markdown(
     summary.to_html(index=True, escape=False, index_names=False, justify='left'),
     unsafe_allow_html=True
