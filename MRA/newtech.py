@@ -30,14 +30,13 @@ location_map = {
     28: 'ACOM', 29: 'distal ACA, left', 30: 'distal ACA, right'
 }
 
-# 4. 기준 데이터 정리
+# 4. 기준 데이터 정리 (Diameter 컬럼 포함)
 df_ref = df_xlsx[df_xlsx['roi_product_name'].isin(compare_cols)].copy()
-df_ref = df_ref[['session_id', 'Aneurysm Index', 'roi_product_name', 'Engine_raw_vol_min', 'Engine_raw_vol_max', 'Engine_raw_vol_mean']]
+df_ref = df_ref[['session_id', 'Aneurysm Index', 'roi_product_name',
+                 'Engine_raw_vol_min', 'Engine_raw_vol_max', 'Engine_raw_vol_mean', 'Diameter']]
 
 # 5. 결과 저장 리스트
 results = []
-
-print(df_ref.columns.tolist())
 
 # 6. 기준 데이터에 있는 모든 session_id + Aneurysm Index 쌍에 대해 비교 수행
 unique_keys = df_ref[['session_id', 'Aneurysm Index']].drop_duplicates()
@@ -61,7 +60,7 @@ for _, key in unique_keys.iterrows():
             results.append({
                 'Patient ID': session_id,
                 'Aneurysm Index': aneurysm_idx,
-                'Feature': r['roi_product_name'],
+                'ROI Name': r['roi_product_name'],
                 'Value (CSV)': None,
                 'Min (XLSX)': r['Engine_raw_vol_min'],
                 'Max (XLSX)': r['Engine_raw_vol_max'],
@@ -72,12 +71,11 @@ for _, key in unique_keys.iterrows():
         for _, r in ref_group.iterrows():
             feature = r['roi_product_name']
 
-            # Location (RUO) 비교
+            # --- Location 비교 (문자열 매칭) ---
             if feature == 'Location (RUO)':
                 loc_code = row.get(feature, None)
                 val_csv = location_map.get(loc_code, None)
-
-                val_ref = r['Engine_raw_vol_mean']  # ✅ 이제 여기서 문자열 가져오기
+                val_ref = r['Engine_raw_vol_mean']
 
                 if val_csv is None or pd.isna(val_ref):
                     result = 'NoMatch'
@@ -89,32 +87,58 @@ for _, key in unique_keys.iterrows():
                 results.append({
                     'Patient ID': session_id,
                     'Aneurysm Index': aneurysm_idx,
-                    'Feature': feature,
+                    'ROI Name': feature,
                     'Value (CSV)': val_csv,
                     'Min (XLSX)': val_ref,
                     'Max (XLSX)': None,
                     'Result': result
                 })
 
+            # --- Maximum Diameter 비교 (정확히 일치) ---
+            elif feature == 'Maximum Diameter':
+                val_csv = row.get(feature, None)
+                val_ref = r.get('Diameter', None)
 
+                try:
+                    if pd.isna(val_csv) or pd.isna(val_ref):
+                        result = 'NoMatch'
+                    elif float(val_csv) == float(val_ref):
+                        result = 'Pass'
+                    else:
+                        result = 'Fail'
+                except:
+                    result = 'NoMatch'
 
-            # 수치형 항목 비교
+                results.append({
+                    'Patient ID': session_id,
+                    'Aneurysm Index': aneurysm_idx,
+                    'ROI Name': feature,
+                    'Value (CSV)': val_csv,
+                    'Min (XLSX)': val_ref,
+                    'Max (XLSX)': None,
+                    'Result': result
+                })
+
+            # --- 나머지 수치형 항목은 범위 비교 ---
             else:
                 val_csv = row.get(feature, None)
                 min_val = r['Engine_raw_vol_min']
                 max_val = r['Engine_raw_vol_max']
 
-                if pd.isna(min_val) or pd.isna(max_val) or pd.isna(val_csv):
+                try:
+                    if pd.isna(min_val) or pd.isna(max_val) or pd.isna(val_csv):
+                        result = 'NoMatch'
+                    elif float(min_val) <= float(val_csv) <= float(max_val):
+                        result = 'Pass'
+                    else:
+                        result = 'Fail'
+                except:
                     result = 'NoMatch'
-                elif min_val <= val_csv <= max_val:
-                    result = 'Pass'
-                else:
-                    result = 'Fail'
 
                 results.append({
                     'Patient ID': session_id,
                     'Aneurysm Index': aneurysm_idx,
-                    'Feature': feature,
+                    'ROI Name': feature,
                     'Value (CSV)': val_csv,
                     'Min (XLSX)': min_val,
                     'Max (XLSX)': max_val,
@@ -124,28 +148,20 @@ for _, key in unique_keys.iterrows():
 # 7. 결과 DataFrame 생성
 df_result = pd.DataFrame(results)
 
-# 8. 엑셀 스타일링: 색상 및 굵은 글씨
+# 8. 엑셀 스타일링
 wb = Workbook()
 ws = wb.active
 ws.title = "비교 결과"
 
-# 스타일 정의
-fill_pass = PatternFill(start_color='CCFFCC', end_color='CCFFCC', fill_type='solid')  # 연두색
-fill_fail = PatternFill(start_color='FFCCCC', end_color='FFCCCC', fill_type='solid')  # 핑크색
+fill_pass = PatternFill(start_color='CCFFCC', end_color='CCFFCC', fill_type='solid')
+fill_fail = PatternFill(start_color='FFCCCC', end_color='FFCCCC', fill_type='solid')
 bold_font = Font(bold=True)
 
-
-
-# 헤더 및 데이터 쓰기
 for r_idx, row in enumerate(dataframe_to_rows(df_result, index=False, header=True), start=1):
     for c_idx, val in enumerate(row, start=1):
         cell = ws.cell(row=r_idx, column=c_idx, value=val)
-
-        # 헤더 Bold
         if r_idx == 1:
             cell.font = bold_font
-
-        # Result 셀 스타일 적용
         elif c_idx == len(row):
             cell.font = bold_font
             if val == 'Pass':
@@ -153,26 +169,6 @@ for r_idx, row in enumerate(dataframe_to_rows(df_result, index=False, header=Tru
             elif val == 'Fail':
                 cell.fill = fill_fail
 
-# 9. 엑셀 저장 (중간 결과 저장 안함)
-wb.save('비교결과_컬러.xlsx')
-print("✅ 스타일이 적용된 최종 결과가 '비교결과_컬러.xlsx'로 저장되었습니다.")
-
-
-# 스타일 함수 정의
-def highlight_result(val):
-    if val == 'Pass':
-        return 'background-color: #CCFFCC; font-weight: bold'  # 연두색
-    elif val == 'Fail':
-        return 'background-color: #FFCCCC; font-weight: bold'  # 핑크색
-    elif val == 'NoMatch':
-        return 'background-color: #F0F0F0; font-weight: bold'  # 회색
-    return ''
-
-# 스타일 적용
-styled = df_result.style.applymap(highlight_result, subset=['Result'])
-
-# HTML 저장
-styled.to_html('비교결과.html', index=False)
-
-print("📄 HTML 리포트가 '비교결과.html'로 저장되었습니다!")
-
+# 9. 엑셀 저장
+wb.save('MRA_Validation.xlsx')
+print("✅ 스타일이 적용된 최종 결과가 MRA_Validation.xlsx 로 저장되었습니다.")
