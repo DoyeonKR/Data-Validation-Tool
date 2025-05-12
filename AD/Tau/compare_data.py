@@ -92,6 +92,14 @@ def compare_data(csv_df, excel_df_filtered):
     # Convert results to DataFrame
     results_df = pd.DataFrame.from_dict(results_dict, orient='index')
 
+    # Overall Result 를 Patient ID 뒤로 이동
+    cols = results_df.columns.tolist()
+    if 'Overall Result' in cols:
+        cols.remove('Overall Result')
+        insert_idx = cols.index('Patient ID') + 1
+        cols.insert(insert_idx, 'Overall Result')
+        results_df = results_df[cols]
+
     # 컬럼 순서 변경: 'Patient ID' 뒤에 'Overall Result'를 배치
     columns = list(results_df.columns)
     columns.remove('Overall Result')  # 'Overall Result' 제거

@@ -118,6 +118,21 @@ def compare_data(csv_df, excel_df_filtered):
 
     results_df = pd.DataFrame.from_dict(results_dict, orient='index')
 
+    # Overall Result 를 Patient ID 뒤로 이동
+    cols = results_df.columns.tolist()
+    if 'Overall Result' in cols:
+        cols.remove('Overall Result')
+        insert_idx = cols.index('Patient ID') + 1
+        cols.insert(insert_idx, 'Overall Result')
+        results_df = results_df[cols]
+
+    # 컬럼 순서 변경: 'Patient ID' 뒤에 'Overall Result'를 배치
+    columns = list(results_df.columns)
+    columns.remove('Overall Result')  # 'Overall Result' 제거
+    columns.insert(columns.index('Patient ID') + 1, 'Overall Result')  # 'Patient ID' 뒤에 추가
+    results_df = results_df[columns]
+
+
     # 누락된 컬럼 보완
     for roi in rois:
         for suffix in ['Result', 'min', 'system', 'max', 'Differ']:
