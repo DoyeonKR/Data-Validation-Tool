@@ -4,8 +4,8 @@ import time
 from mapping_dict import mapping_dict  # 딕셔너리형 매핑 테이블 불러오기
 
 # 1. 파일 경로 설정
-csv_path = "AQUA_T1_웨스턴_Last.csv"
-answer_path = "웨스턴_t1_정답지_ZSCORE_추가반올림완료.xlsx"
+csv_path = "t2.csv"
+answer_path = "t2_정답지.xlsx"
 
 # 2. 파일 불러오기
 csv_df = pd.read_csv(csv_path)
@@ -53,7 +53,6 @@ def validate_row(row, csv_data):
         if pd.isna(value):
             return value, 'Invalid'
 
-        # ✅ 항상 작은 쪽이 min이 되도록 처리
         lower = min(min_val, max_val)
         upper = max(min_val, max_val)
 
@@ -86,5 +85,5 @@ end_time = time.time()
 print(f"✅ 비교 완료! 실행 시간: {end_time - start_time:.2f}초")
 
 # 8. 결과 저장
-answer_df.to_excel("AQ_T1_DataValidation_웨스턴.xlsx", index=False)
+answer_df.to_excel("AQ_T2_DataValidation.xlsx", index=False)
 print("📁 결과 저장됨")
