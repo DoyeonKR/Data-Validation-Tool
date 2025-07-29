@@ -1,44 +1,45 @@
 import pandas as pd
 
-def normalize_id_fixed(id_value):
-    """Normalize an ID to lower case and strip whitespace."""
-    return id_value.strip().lower()
+def extract_id(session_id):
+    parts = session_id.split('_')
+    if len(parts) > 1:
+        return parts[1]
+    return session_id
+
+def normalize_id(id_value):
+    return ''.join(id_value.lower().split('_'))
 
 def compare_data(csv_df, excel_df_filtered):
-    """
-    Compare data between CSV and Excel based on normalized IDs and calculate results.
-    """
-    # Add normalized IDs to both dataframes
-    csv_df['Normalized Patient ID'] = csv_df['Patient ID'].apply(normalize_id_fixed)
-    excel_df_filtered['Normalized Session ID'] = excel_df_filtered['session_id'].apply(normalize_id_fixed)
-
     rois = [
-        'Total Neocortical Region SUVR',
-        'Left Neocortical Region SUVR',
-        'Right Neocortical Region SUVR',
-        'Total Frontal Region SUVR',
-        'Left Frontal Region SUVR',
-        'Right Frontal Region SUVR',
+        'Intracranial Volume(ICV)_Total Volume(Raw)',
+        'Hippocampus_Total Volume(Raw)',
+        'Hippocampus_Left Volume(Raw)',
+        'Hippocampus_Right Volume(Raw)',
+        'Inferior Lateral Ventricle_Total Volume(Raw)',
+        'Inferior Lateral Ventricle_Left Volume(Raw)',
+        'Inferior Lateral Ventricle_Right Volume(Raw)',
+        'Lateral Ventricle_Total Volume(Raw)',
+        'Lateral Ventricle_Left Volume(Raw)',
+        'Lateral Ventricle_Right Volume(Raw)',
+        'Cortical Grey Matter_Total Volume(Raw)',
+        'Cortical Grey Matter_Left Volume(Raw)',
+        'Cortical Grey Matter_Right Volume(Raw)'
     ]
 
     results_dict = {}
     for index, excel_row in excel_df_filtered.iterrows():
-        session_id = excel_row['Normalized Session ID']
+        session_id = excel_row['session_id'].strip()
+        extracted_session_id = extract_id(session_id)
+        normalized_session_id = normalize_id(extracted_session_id)
 
-        # Match Patient ID with exact matching
-        matching_patient_rows = csv_df[csv_df['Normalized Patient ID'] == session_id]
+        csv_df['Normalized Patient ID'] = csv_df['Patient ID'].apply(normalize_id)
+        matching_patient_rows = csv_df[csv_df['Normalized Patient ID'].str.contains(normalized_session_id, na=False)]
 
         if matching_patient_rows.empty:
-            # No match found, record as 'No Match'
             if session_id not in results_dict:
-                results_dict[session_id] = {
-                    'Session ID': session_id,
-                    'Patient ID': 'No Match',
-                    'Overall Result': 'No Match',
-                }
+                results_dict[session_id] = {'Session ID': session_id, 'Patient ID': 'No Match', 'Overall Result': 'No Match'}
             continue
 
-        # Process each matched patient
         for _, patient_row in matching_patient_rows.iterrows():
             patient_id = patient_row['Patient ID'].strip()
             if patient_id not in results_dict:
@@ -59,7 +60,7 @@ def compare_data(csv_df, excel_df_filtered):
                 volume_value = patient_row[roi]
 
                 roi_matches = excel_df_filtered[
-                    (excel_df_filtered['Normalized Session ID'] == session_id) &
+                    (excel_df_filtered['session_id'] == session_id) &
                     (excel_df_filtered['roi_product_name'] == roi)
                 ]
 
@@ -88,22 +89,11 @@ def compare_data(csv_df, excel_df_filtered):
 
             patient_result['Overall Result'] = overall_result
 
-
-    # Convert results to DataFrame
+    # ROI mean 컬럼 제거
     results_df = pd.DataFrame.from_dict(results_dict, orient='index')
-
-    # Overall Result 를 Patient ID 뒤로 이동
-    cols = results_df.columns.tolist()
-    if 'Overall Result' in cols:
-        cols.remove('Overall Result')
-        insert_idx = cols.index('Patient ID') + 1
-        cols.insert(insert_idx, 'Overall Result')
-        results_df = results_df[cols]
-
-    # 컬럼 순서 변경: 'Patient ID' 뒤에 'Overall Result'를 배치
-    columns = list(results_df.columns)
-    columns.remove('Overall Result')  # 'Overall Result' 제거
-    columns.insert(columns.index('Patient ID') + 1, 'Overall Result')  # 'Patient ID' 뒤에 추가
-    results_df = results_df[columns]
+    for roi in rois:
+        mean_col = f'{roi} mean'
+        if mean_col in results_df.columns:
+            results_df.drop(columns=[mean_col], inplace=True)
 
     return results_df, rois

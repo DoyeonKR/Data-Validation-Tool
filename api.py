@@ -34,6 +34,9 @@ from PET.Tau.save_to_excel import save_to_excel as save_to_excel_petTau
 from CTP.save_to_excel import save_to_excel as save_to_excel_ctp
 from CTP.compare_data import compare_data as compare_data_ctp
 from CTP.read_data import read_data as read_data_ctp
+from AD.Normative.compare_data import compare_data as compare_data_normative
+from AD.Normative.read_data import read_data as read_data_normative
+from AD.Normative.save_to_excel import save_to_excel as save_to_excel_normative
 
 
 
@@ -197,6 +200,13 @@ async def compare_files_amyloid(
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "AD_Amyloid", read_data_amyloid, compare_data_amyloid, save_to_excel_amyloid)
+
+@app.post("/AD/Normative/")
+async def compare_files_normative(
+    csv_file: UploadFile = File(...),
+    excel_file: UploadFile = File(...),
+):
+    return await process_comparison(csv_file, excel_file, "AD_Normative", read_data_normative, compare_data_normative, save_to_excel_normative)
 
 @app.post("/PET/DAT/")
 async def compare_files_dat_suvr(
