@@ -2,10 +2,11 @@ import pandas as pd
 from tqdm import tqdm
 import time
 from mapping_dict import mapping_dict  # 딕셔너리형 매핑 테이블 불러오기
+from datetime import datetime
 
 # 1. 파일 경로 설정
-csv_path = "t2.csv"
-answer_path = "t2_정답지.xlsx"
+csv_path = "AQUA_Hyperintensity_20250618.csv"
+answer_path = "aqua_t2_160_dcm.xlsx"
 
 # 2. 파일 불러오기
 csv_df = pd.read_csv(csv_path)
@@ -81,9 +82,10 @@ answer_df['Engine_raw_vol_actual'] = actuals
 answer_df['Result'] = results
 
 
+today = datetime.now().strftime("%Y%m%d-%H%M%S")
 end_time = time.time()
 print(f"✅ 비교 완료! 실행 시간: {end_time - start_time:.2f}초")
 
 # 8. 결과 저장
-answer_df.to_excel("AQ_T2_DataValidation.xlsx", index=False)
+answer_df.to_excel(f"AQ_T2_DataValidation_{today}.xlsx", index=False)
 print("📁 결과 저장됨")
