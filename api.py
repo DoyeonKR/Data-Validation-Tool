@@ -1,4 +1,4 @@
-from fastapi import FastAPI, File, UploadFile, Form
+from fastapi import FastAPI, File, UploadFile
 import os
 import requests
 from fastapi.responses import FileResponse
@@ -37,11 +37,15 @@ from CTP.read_data import read_data as read_data_ctp
 from AD.Normative.compare_data import compare_data as compare_data_normative
 from AD.Normative.read_data import read_data as read_data_normative
 from AD.Normative.save_to_excel import save_to_excel as save_to_excel_normative
+from AD.ARIAE.compare_data import compare_data as compare_data_ariaE
+from AD.ARIAE.read_data import read_data as read_data_ariaE
+from AD.ARIAE.save_to_excel import save_to_excel as save_to_excel_ariaE
+from AD20.Tau.read_data import read_data as read_data_ad20tau
+from AD20.Tau.compare_data import compare_data as compare_data_ad20tau
+from AD20.Tau.save_to_excel import save_to_excel as save_to_excel_ad20tau
 
 
-
-
-app = FastAPI(title="데이터 비교 API", description="CSV 및 Excel 데이터를 비교하는 API", version="1.0.0")
+app = FastAPI(title="Engine Data Validation API", description="CSV 및 Excel 데이터를 비교하는 API Made By. SV 김도연B", version="1.0.0")
 
 
 TEAMS_WEBHOOK_URL = "https://neurophet2016.webhook.office.com/webhookb2/68c3850f-014d-4361-8035-655fe16f7aa8@0e0de970-ba32-48a4-a048-99d48e6eb282/IncomingWebhook/c3a5a9e99a41473a9f4d53d619aa0e87/a1b4164a-d122-4726-9b16-7896a06c2159/V2kLMW8k2Ybf2fyBleQleNixH_UVSyEaJqedNNaQiJtwc1"
@@ -208,6 +212,13 @@ async def compare_files_normative(
 ):
     return await process_comparison(csv_file, excel_file, "AD_Normative", read_data_normative, compare_data_normative, save_to_excel_normative)
 
+@app.post("/AD/ARIAE/")
+async def compare_files_ariaE(
+    csv_file: UploadFile = File(...),
+    excel_file: UploadFile = File(...),
+):
+    return await process_comparison(csv_file, excel_file, "AD_ARIAE", read_data_ariaE, compare_data_ariaE, save_to_excel_ariaE)
+
 @app.post("/PET/DAT/")
 async def compare_files_dat_suvr(
     csv_file: UploadFile = File(...),
@@ -250,6 +261,20 @@ async def compare_files_ctp(
 ):
     return await process_comparison(csv_file, excel_file, "CTP_CT", read_data_ctp, compare_data_ctp, save_to_excel_ctp)
 
+# @app.post("/AD/AD32Amyloid/")
+# async def compare_files_ad32amyloid(
+#     csv_file: UploadFile = File(...),
+#     excel_file: UploadFile = File(...),
+# ):
+#     return await process_comparison(csv_file, excel_file, "AD_AD32Amyloid", read_data_amyloid, compare_data_ad32amyloid, save_to_excel_amyloid)
+
+@app.post("/AD20/Tau/")
+async def compare_files_ad20tau(
+    csv_file: UploadFile = File(...),
+    excel_file: UploadFile = File(...),
+):
+    return await process_comparison(csv_file, excel_file, "AD20_Tau", read_data_ad20tau, compare_data_ad20tau, save_to_excel_ad20tau)
+
 if __name__ == "__main__":
     import uvicorn
     ngrok_url = get_ngrok_url()
@@ -258,4 +283,3 @@ if __name__ == "__main__":
     else:
         print("ngrok URL을 가져올 수 없습니다. ngrok가 실행 중인지 확인하세요.")
     uvicorn.run(app, host="0.0.0.0", port=9000)
-
