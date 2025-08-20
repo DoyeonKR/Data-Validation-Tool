@@ -2,9 +2,9 @@ import pandas as pd
 
 # ROI 번호와 CSV 컬럼명 매핑
 ROI_MAPPING = {
-    908: "Periventricular FLAIR Hyperintensity_Volume",
-    907: "Deep FLAIR Hyperintensity_Volume",
-    909: "Subcortical Grey Matter FLAIR Hyperintensity_Volume"
+    908: "Periventricular FLAIR Hyperintensity _Volume",
+    907: "Deep FLAIR Hyperintensity _Volume",
+    909: "Subcortical Grey Matter FLAIR Hyperintensity _Volume"
 }
 
 
