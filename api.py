@@ -43,9 +43,18 @@ from AD.ARIAE.save_to_excel import save_to_excel as save_to_excel_ariaE
 from AD20.Tau.read_data import read_data as read_data_ad20tau
 from AD20.Tau.compare_data import compare_data as compare_data_ad20tau
 from AD20.Tau.save_to_excel import save_to_excel as save_to_excel_ad20tau
+from AD20.Flair.read_data import read_data as read_data_ad20flair
+from AD20.Flair.compare_data import compare_data as compare_data_ad20flair
+from AD20.Flair.save_to_excel import save_to_excel as save_to_excel_ad20flair
+from MRA.handlers import read_data as read_data_mra
+from MRA.handlers import compare_data as compare_data_mra
+from MRA.handlers import save_to_excel as save_to_excel_mra
 
 
-app = FastAPI(title="Engine Data Validation API", description="CSV 및 Excel 데이터를 비교하는 API Made By. SV 김도연B", version="1.0.0")
+app = FastAPI(title="Engine Data Validation API",
+              description="CSV 및 Excel 데이터를 비교하는 API Made By. SV 김도연B",
+              version="1.0.0",
+              redoc_url="/redoc")
 
 
 TEAMS_WEBHOOK_URL = "https://neurophet2016.webhook.office.com/webhookb2/68c3850f-014d-4361-8035-655fe16f7aa8@0e0de970-ba32-48a4-a048-99d48e6eb282/IncomingWebhook/c3a5a9e99a41473a9f4d53d619aa0e87/a1b4164a-d122-4726-9b16-7896a06c2159/V2kLMW8k2Ybf2fyBleQleNixH_UVSyEaJqedNNaQiJtwc1"
@@ -175,8 +184,6 @@ async def root():
     return {"message": "ngrok 테스트 서버 실행 중"}
 
 
-
-
 @app.post("/AD/T1/")
 async def compare_files_t1(
     csv_file: UploadFile = File(...),
@@ -261,12 +268,6 @@ async def compare_files_ctp(
 ):
     return await process_comparison(csv_file, excel_file, "CTP_CT", read_data_ctp, compare_data_ctp, save_to_excel_ctp)
 
-# @app.post("/AD/AD32Amyloid/")
-# async def compare_files_ad32amyloid(
-#     csv_file: UploadFile = File(...),
-#     excel_file: UploadFile = File(...),
-# ):
-#     return await process_comparison(csv_file, excel_file, "AD_AD32Amyloid", read_data_amyloid, compare_data_ad32amyloid, save_to_excel_amyloid)
 
 @app.post("/AD20/Tau/")
 async def compare_files_ad20tau(
@@ -274,6 +275,28 @@ async def compare_files_ad20tau(
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "AD20_Tau", read_data_ad20tau, compare_data_ad20tau, save_to_excel_ad20tau)
+
+@app.post("/AD20/Flair/")
+async def compare_files_ad20flair(
+    csv_file: UploadFile = File(...),
+    excel_file: UploadFile = File(...),
+):
+    return await process_comparison(csv_file, excel_file, "AD20_Flair", read_data_ad20flair, compare_data_ad20flair, save_to_excel_ad20flair)
+
+
+@app.post("/MRA/")
+async def compare_files_scale_mra(
+    csv_file: UploadFile = File(...),
+    excel_file: UploadFile = File(...),
+):
+    return await process_comparison(
+        csv_file,
+        excel_file,
+        "MRA",
+        read_data_mra,       # (csv_path, excel_path) -> (csv_df, excel_df_filtered)
+        compare_data_mra,    # (csv_df, excel_df_filtered) -> (results_df, rois)
+        save_to_excel_mra,   # (results_df, file_path, rois) -> None
+    )
 
 if __name__ == "__main__":
     import uvicorn
