@@ -1,6 +1,8 @@
 from fastapi import FastAPI, File, UploadFile
 import os
 import requests
+import subprocess
+import time
 from fastapi.responses import FileResponse
 from datetime import datetime
 
@@ -59,6 +61,56 @@ app = FastAPI(title="Engine Data Validation API",
 
 TEAMS_WEBHOOK_URL = "https://neurophet2016.webhook.office.com/webhookb2/68c3850f-014d-4361-8035-655fe16f7aa8@0e0de970-ba32-48a4-a048-99d48e6eb282/IncomingWebhook/c3a5a9e99a41473a9f4d53d619aa0e87/a1b4164a-d122-4726-9b16-7896a06c2159/V2kLMW8k2Ybf2fyBleQleNixH_UVSyEaJqedNNaQiJtwc1"
 SAVE_DIR = "./download"
+
+# ngrok 프로세스를 저장할 전역 변수
+ngrok_process = None
+
+
+def start_ngrok():
+    """ngrok 프로세스를 시작합니다."""
+    global ngrok_process
+    try:
+        print("🚀 ngrok 터널을 시작합니다...")
+        ngrok_process = subprocess.Popen(
+            ["ngrok", "http", "9000"],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            creationflags=subprocess.CREATE_NEW_CONSOLE if os.name == 'nt' else 0
+        )
+
+        # ngrok가 시작될 시간을 기다림
+        time.sleep(3)
+
+        # ngrok URL 확인
+        ngrok_url = get_ngrok_url()
+        if ngrok_url:
+            print(f"✅ ngrok 터널이 시작되었습니다: {ngrok_url}")
+        else:
+            print("⚠️ ngrok 터널 URL을 가져올 수 없습니다.")
+
+    except FileNotFoundError:
+        print("❌ ngrok가 설치되지 않았거나 PATH에 없습니다.")
+        print("💡 https://ngrok.com/download 에서 ngrok를 설치하세요.")
+    except Exception as e:
+        print(f"❌ ngrok 시작 중 오류: {e}")
+
+
+def stop_ngrok():
+    """ngrok 프로세스를 종료합니다."""
+    global ngrok_process
+    if ngrok_process:
+        try:
+            print("🛑 ngrok 터널을 종료합니다...")
+            ngrok_process.terminate()
+            ngrok_process.wait(timeout=5)
+            print("✅ ngrok 터널이 종료되었습니다.")
+        except subprocess.TimeoutExpired:
+            print("⚠️ ngrok 프로세스를 강제 종료합니다...")
+            ngrok_process.kill()
+        except Exception as e:
+            print(f"❌ ngrok 종료 중 오류: {e}")
+        finally:
+            ngrok_process = None
 
 def get_ngrok_url():
     try:
@@ -300,9 +352,17 @@ async def compare_files_scale_mra(
 
 if __name__ == "__main__":
     import uvicorn
+    start_ngrok()
     ngrok_url = get_ngrok_url()
     if ngrok_url:
         print(f"ngrok URL: {ngrok_url}")  # ngrok URL을 로그에 출력
     else:
         print("ngrok URL을 가져올 수 없습니다. ngrok가 실행 중인지 확인하세요.")
-    uvicorn.run(app, host="0.0.0.0", port=9000)
+        try:
+            print("============ Engine Validation API 서버 실행 ==============")
+            uvicorn.run(app, host="0.0.0.0", port=9000)
+        except KeyboardInterrupt:
+            print("서버가 중단되었습니다.")
+        finally:
+            stop_ngrok()
+
