@@ -51,6 +51,9 @@ from AD20.Flair.save_to_excel import save_to_excel as save_to_excel_ad20flair
 from MRA.handlers import read_data as read_data_mra
 from MRA.handlers import compare_data as compare_data_mra
 from MRA.handlers import save_to_excel as save_to_excel_mra
+from AD20.ARIAH.read_data import read_data as read_data_ariah
+from AD20.ARIAH.compare_data import compare_data as compare_data_ariah
+from AD20.ARIAH.save_to_excel import save_to_excel as save_to_excel_ariah
 
 
 app = FastAPI(title="Engine Data Validation API",
@@ -335,6 +338,20 @@ async def compare_files_ad20flair(
 ):
     return await process_comparison(csv_file, excel_file, "AD20_Flair", read_data_ad20flair, compare_data_ad20flair, save_to_excel_ad20flair)
 
+@app.post("/AD20/ARIAH/")
+async def compare_files_ariah(
+    csv_file: UploadFile = File(...),
+    excel_file: UploadFile = File(...),
+):
+    return await process_comparison(
+        csv_file,
+        excel_file,
+        "AD_ARIAH",
+        read_data_ariah,  # (csv_path, excel_path) -> (csv_df, excel_df)
+        compare_data_ariah,  # (csv_df, excel_df) -> (results_df, rois)
+        save_to_excel_ariah,  # (results_df, file_path, rois) -> None
+    )
+
 
 @app.post("/MRA/")
 async def compare_files_scale_mra(
@@ -352,17 +369,19 @@ async def compare_files_scale_mra(
 
 if __name__ == "__main__":
     import uvicorn
-    start_ngrok()
-    ngrok_url = get_ngrok_url()
-    if ngrok_url:
-        print(f"ngrok URL: {ngrok_url}")  # ngrok URL을 로그에 출력
-    else:
-        print("ngrok URL을 가져올 수 없습니다. ngrok가 실행 중인지 확인하세요.")
-        try:
-            print("============ Engine Validation API 서버 실행 ==============")
-            uvicorn.run(app, host="0.0.0.0", port=9000)
-        except KeyboardInterrupt:
-            print("서버가 중단되었습니다.")
-        finally:
-            stop_ngrok()
+    try:
+        start_ngrok()  # 이 함수가 블로킹되지 않도록(백그라운드 실행) 구현되어 있어야 합니다.
+        ngrok_url = get_ngrok_url()
+        if ngrok_url:
+            print(f"ngrok URL: {ngrok_url}")
+        else:
+            print("ngrok URL을 가져올 수 없습니다. ngrok가 실행 중인지 확인하세요.")
+
+        print("============ Engine Validation API 서버 실행 ==============")
+        uvicorn.run(app, host="0.0.0.0", port=9000)
+    except KeyboardInterrupt:
+        print("서버가 중단되었습니다.")
+    finally:
+        stop_ngrok()
+
 
