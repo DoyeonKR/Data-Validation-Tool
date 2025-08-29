@@ -39,9 +39,6 @@ from CTP.read_data import read_data as read_data_ctp
 from AD.Normative.compare_data import compare_data as compare_data_normative
 from AD.Normative.read_data import read_data as read_data_normative
 from AD.Normative.save_to_excel import save_to_excel as save_to_excel_normative
-from AD.ARIAE.compare_data import compare_data as compare_data_ariaE
-from AD.ARIAE.read_data import read_data as read_data_ariaE
-from AD.ARIAE.save_to_excel import save_to_excel as save_to_excel_ariaE
 from AD20.Tau.read_data import read_data as read_data_ad20tau
 from AD20.Tau.compare_data import compare_data as compare_data_ad20tau
 from AD20.Tau.save_to_excel import save_to_excel as save_to_excel_ad20tau
@@ -274,12 +271,6 @@ async def compare_files_normative(
 ):
     return await process_comparison(csv_file, excel_file, "AD_Normative", read_data_normative, compare_data_normative, save_to_excel_normative)
 
-@app.post("/AD/ARIAE/")
-async def compare_files_ariaE(
-    csv_file: UploadFile = File(...),
-    excel_file: UploadFile = File(...),
-):
-    return await process_comparison(csv_file, excel_file, "AD_ARIAE", read_data_ariaE, compare_data_ariaE, save_to_excel_ariaE)
 
 @app.post("/PET/DAT/")
 async def compare_files_dat_suvr(
