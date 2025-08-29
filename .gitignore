@@ -8,3 +8,11 @@
 *.build
 *.vs
 
+# Office lock/temporary files
+~$*.xlsx
+~$*.xls
+~$*.docx
+~$*.pptx
+*.tmp
+*.~lock.*
+*.csv
