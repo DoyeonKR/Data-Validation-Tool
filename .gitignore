@@ -7,6 +7,7 @@
 *.dist
 *.build
 *.vs
+download
 
 # Office lock/temporary files
 ~$*.xlsx
