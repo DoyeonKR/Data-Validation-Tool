@@ -2,76 +2,63 @@ import pandas as pd
 
 # ROI 번호와 CSV 컬럼명 매핑
 ROI_MAPPING = {
-    932: "Periventricular FLAIR Hyperintensity_Volume",
-    931: "Deep FLAIR Hyperintensity_Volume",
-    941: "Subcortical Grey Matter FLAIR Hyperintensity_Volume"
+    300: "Intracranial Volume(ICV)_Total Norm Percentile",
+    12: "Hippocampus_Total Norm Percentile",
+    112: "Hippocampus_Left Norm Percentile",
+    212: "Hippocampus_Right Norm Percentile",
+    5: "Inferior Lateral Ventricle_Total Norm Percentile",
+    105: "Inferior Lateral Ventricle_Left Norm Percentile",
+    205: "Inferior Lateral Ventricle_Right Norm Percentile",
+    307: "Lateral Ventricle_Total Norm Percentile",
+    407: "Lateral Ventricle_Left Norm Percentile",
+    507: "Lateral Ventricle_Right Norm Percentile",
+    3: "Cortical Grey Matter_Total Norm Percentile",
+    103: "Cortical Grey Matter_Left Norm Percentile",
+    203: "Cortical Grey Matter_Right Norm Percentile",
+    309: "Subcortical Grey Matter_Total Norm Percentile",
+    409: "Subcortical Grey Matter_Left Norm Percentile",
+    509: "Subcortical Grey Matter_Right Norm Percentile"
 }
 
-
-def extract_id(session_id):
-    """session_id에서 ID 부분만 추출하는 함수.
-
-    Args:
-        session_id (str): 세션 ID (예: 'sub_1234_20240101')
-
-    Returns:
-        str: 추출된 ID 부분 (예: '1234')
-    """
-    parts = session_id.split('_')
-    if len(parts) > 1:
-        return parts[1]
-    return session_id
-
-
+# ID 정규화 함수
 def normalize_id(id_value):
-    """ID를 표준 형식으로 변환하는 함수.
+    return ''.join(str(id_value).strip().lower().replace('_', '').replace('-', ''))
 
-    Args:
-        id_value (str): 원본 ID 값
+# session_id에서 숫자 추출
+def extract_id(session_id):
+    parts = str(session_id).strip().split('_')
+    for part in parts:
+        if part.lower().startswith('s') and len(part) > 1:
+            return part
+        elif part.isdigit():
+            return part
+    return session_id.strip()
 
-    Returns:
-        str: 소문자로 변환하고 언더스코어 제거한 정규화된 ID
-    """
-    return ''.join(id_value.lower().split('_'))
-
-
+# 메인 비교 함수
 def compare_data(csv_df, excel_df_filtered):
-    """CSV와 Excel 데이터를 비교하여 결과를 반환하는 메인 함수.
-
-    Args:
-        csv_df (DataFrame): CSV 파일에서 로드한 데이터프레임
-        excel_df_filtered (DataFrame): Excel 파일에서 필터링된 데이터프레임
-
-    Returns:
-        tuple: (결과 데이터프레임, ROI 리스트)
-    """
-    # CSV 컬럼명 정리 - 불필요한 공백 및 특수문자 제거
+    # CSV 컬럼 정리
     csv_df.columns = [col.strip().replace('\u200b', '').replace('\xa0', ' ') for col in csv_df.columns]
 
-    # 실제 CSV에 존재하는 ROI만 필터링하여 비교 대상 결정
+    # 실제 비교할 수 있는 ROI만 필터링
     available_rois = {idx: name for idx, name in ROI_MAPPING.items() if name in csv_df.columns}
     rois = list(available_rois.values())
 
-    # 비교 결과를 저장할 딕셔너리
     results_dict = {}
 
-    # CSV 데이터의 Patient ID 정규화
+    # Normalize Patient ID
     csv_df['Normalized Patient ID'] = csv_df['Patient ID'].apply(normalize_id)
 
-    # Excel 데이터를 session_id별로 그룹화 (한 세션에 여러 ROI 데이터 존재)
+    # 세션별 그룹
     grouped_excel = excel_df_filtered.groupby('session_id')
 
-    # 각 세션별로 처리
     for session_id, roi_rows in grouped_excel:
-        # 세션 ID 전처리
         session_id = str(session_id).strip()
-        extracted_session_id = extract_id(session_id)  # ID 부분만 추출
-        normalized_session_id = normalize_id(extracted_session_id)  # 정규화
+        extracted_session_id = extract_id(session_id)
+        normalized_session_id = normalize_id(extracted_session_id)
 
-        # CSV에서 해당 세션과 매칭되는 환자 찾기
+        # 환자 매칭
         matching_patient_rows = csv_df[csv_df['Normalized Patient ID'].str.contains(normalized_session_id, na=False)]
 
-        # 매칭되는 환자가 없는 경우
         if matching_patient_rows.empty:
             results_dict[session_id] = {
                 'Session ID': session_id,
@@ -80,11 +67,8 @@ def compare_data(csv_df, excel_df_filtered):
             }
             continue
 
-        # 매칭된 환자들에 대해 처리
         for _, patient_row in matching_patient_rows.iterrows():
             patient_id = patient_row['Patient ID'].strip()
-
-            # 결과 딕셔너리에 환자 정보 초기화
             if patient_id not in results_dict:
                 results_dict[patient_id] = {
                     'Session ID': session_id,
@@ -92,23 +76,18 @@ def compare_data(csv_df, excel_df_filtered):
                 }
 
             patient_result = results_dict[patient_id]
-            overall_result = 'Pass'  # 전체 결과 초기값
+            overall_result = 'Pass'
 
-            # 해당 세션의 각 ROI 데이터 처리
             for _, roi_row in roi_rows.iterrows():
-                roi_index = roi_row['roi_index']  # ROI 번호
-
-                # 매핑되지 않은 ROI는 건너뛰기
+                roi_index = roi_row['roi_index']
                 if roi_index not in available_rois:
                     continue
 
-                roi_name = available_rois[roi_index]  # ROI 이름 가져오기
+                roi_name = available_rois[roi_index]
 
-                # CSV에서 해당 ROI 값 추출 시도
                 try:
                     system_value = float(patient_row[roi_name])
                 except (KeyError, ValueError, TypeError):
-                    # 값을 가져오지 못한 경우 'No Match' 처리
                     patient_result[f'{roi_name} Result'] = 'No Match'
                     patient_result[f'{roi_name} min'] = 'None'
                     patient_result[f'{roi_name} system'] = 'None'
@@ -117,35 +96,29 @@ def compare_data(csv_df, excel_df_filtered):
                     overall_result = 'Fail'
                     continue
 
-                # Excel에서 해당 ROI의 참조 범위 값들 가져오기
                 min_value = roi_row['Engine_raw_vol_min']
                 max_value = roi_row['Engine_raw_vol_max']
                 mean_value = roi_row['Engine_raw_vol_mean']
 
-                # 참조 범위가 유효한지 확인하고 비교 수행
                 if pd.isnull(min_value) or pd.isnull(max_value):
-                    roi_result = 'No Match'  # 참조 범위가 없는 경우
+                    roi_result = 'No Match'
                 elif min_value <= system_value <= max_value:
-                    roi_result = 'Pass'  # 범위 내에 있는 경우
+                    roi_result = 'Pass'
                 else:
-                    roi_result = 'Fail'  # 범위를 벗어난 경우
-                    overall_result = 'Fail'  # 하나라도 실패하면 전체 실패
+                    roi_result = 'Fail'
+                    overall_result = 'Fail'
 
-                # 결과 저장
                 patient_result[f'{roi_name} Result'] = roi_result
                 patient_result[f'{roi_name} min'] = min_value
                 patient_result[f'{roi_name} system'] = system_value
                 patient_result[f'{roi_name} max'] = max_value
-                # 평균값과의 차이 계산
                 patient_result[f'{roi_name} Differ'] = system_value - mean_value if pd.notnull(mean_value) else None
 
-            # 해당 환자의 전체 결과 저장
             patient_result['Overall Result'] = overall_result
 
-    # 딕셔너리를 데이터프레임으로 변환
     results_df = pd.DataFrame.from_dict(results_dict, orient='index')
 
-    # 누락된 컬럼들을 기본값으로 보완 (모든 ROI에 대해 일관된 컬럼 구조 보장)
+    # 누락된 컬럼 보완
     for roi in rois:
         for suffix in ['Result', 'min', 'system', 'max', 'Differ']:
             col = f'{roi} {suffix}'
@@ -153,4 +126,3 @@ def compare_data(csv_df, excel_df_filtered):
                 results_df[col] = 'None' if suffix != 'Differ' else None
 
     return results_df, rois
-

@@ -1,10 +1,20 @@
 
 
 
-
+devcontaiver
 *.venv
 *.idea
 *.dist
 *.build
 *.vs
+download
+
+# Office lock/temporary files
+~$*.xlsx
+~$*.xls
+~$*.docx
+~$*.pptx
+*.tmp
+*.~lock.*
+*.csv
 

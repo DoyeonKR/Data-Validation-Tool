@@ -5,7 +5,7 @@ from mapping_dict import mapping_dict  # 딕셔너리형 매핑 테이블 불러
 from datetime import datetime
 
 # 1. 파일 경로 설정
-csv_path = "AQUA_Volumetry_20250616_웨스턴.csv"
+csv_path = "AQUA_Volumetry_202506스턴.csv"
 answer_path = "웨스턴_t1_정답지_ZSCORE_추가반올림완료.xlsx"
 
 # 2. 파일 불러오기

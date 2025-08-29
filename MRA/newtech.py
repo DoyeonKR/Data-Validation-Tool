@@ -171,4 +171,4 @@ for r_idx, row in enumerate(dataframe_to_rows(df_result, index=False, header=Tru
 
 # 9. 엑셀 저장
 wb.save('MRA_Validation.xlsx')
-print("✅ 스타일이 적용된 최종 결과가 MRA_Validation.xlsx 로 저장되었습니다.")
+print(" 최종 결과가 MRA_Validation.xlsx 로 저장되었습니다.")
