@@ -54,6 +54,9 @@ from MRA.handlers import save_to_excel as save_to_excel_mra
 from AD20.ARIAH.read_data import read_data as read_data_ariah
 from AD20.ARIAH.compare_data import compare_data as compare_data_ariah
 from AD20.ARIAH.save_to_excel import save_to_excel as save_to_excel_ariah
+from AQ.t1.read_data import read_data as read_data_aq_t1
+from AQ.t1.compare_data import compare_data as compare_data_aq_t1
+from AQ.t1.save_to_excel import save_to_excel as save_to_excel_aq_t1
 
 
 app = FastAPI(title="Engine Data Validation API",
@@ -365,6 +368,19 @@ async def compare_files_scale_mra(
         read_data_mra,       # (csv_path, excel_path) -> (csv_df, excel_df_filtered)
         compare_data_mra,    # (csv_df, excel_df_filtered) -> (results_df, rois)
         save_to_excel_mra,   # (results_df, file_path, rois) -> None
+    )
+@app.post("/AQ/T1")
+async def compare_files_scale_mra(
+    csv_file: UploadFile = File(...),
+    excel_file: UploadFile = File(...),
+):
+    return await process_comparison(
+        csv_file,
+        excel_file,
+        "AQ_T1",
+        read_data_aq_t1,       # (csv_path, excel_path) -> (csv_df, excel_df_filtered)
+        compare_data_aq_t1,    # (csv_df, excel_df_filtered) -> (results_df, rois)
+        save_to_excel_aq_t1,   # (results_df, file_path, rois) -> None
     )
 
 if __name__ == "__main__":
