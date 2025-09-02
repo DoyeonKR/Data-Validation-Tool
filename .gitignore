@@ -1,7 +1,4 @@
-
-
-
-
+# --- 기존 규칙 유지 ---
 *.venv
 *.idea
 *.dist
@@ -17,3 +14,43 @@ download
 *.tmp
 *.~lock.*
 *.csv
+
+# --- 추가: Python 바이트코드/캐시 ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# --- 추가: 가상환경 디렉터리 ---
+.venv/
+venv/
+ENV/
+env/
+
+# --- 추가: 빌드/배포 산출물(PyInstaller 등) ---
+build/
+dist/
+*.egg-info/
+*.spec
+# 일부 툴이 만드는 캐시 폴더
+**/localpycs/
+
+# --- 추가: 테스트/정적분석 캐시 ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.coverage
+htmlcov/
+
+# --- 추가: 노트북 체크포인트 ---
+.ipynb_checkpoints/
+
+# --- 추가: 로그 ---
+*.log
+
+# --- 추가: IDE/OS 산출물 ---
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
