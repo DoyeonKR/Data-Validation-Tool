@@ -69,8 +69,8 @@ def compare_csv_files(csv1_path, csv2_path, output_path, start_column_index=13):
 
             # 두 파일 모두에 컬럼이 있는 경우
             if csv1_col in merged_df.columns and csv2_col in merged_df.columns:
-                temp_df[f"{col}_CSV2.0.1"] = merged_df[csv1_col]
-                temp_df[f"{col}_CSV2.0.2"] = merged_df[csv2_col]
+                temp_df[f"{col}_CSV2.1.0"] = merged_df[csv1_col]
+                temp_df[f"{col}_CSV2.1.2"] = merged_df[csv2_col]
 
                 val1 = pd.to_numeric(merged_df[csv1_col], errors='coerce')
                 val2 = pd.to_numeric(merged_df[csv2_col], errors='coerce')
@@ -126,8 +126,8 @@ timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 # 사용 예시
 if __name__ == "__main__":
     # 파일 경로 설정
-    csv1_path = "CT_PET_Amyloid_SUVR_2.0.1.csv"  # 첫 번째 CSV 파일
-    csv2_path = "CT_PET_Amyloid_SUVR_2.0.2.csv"  # 두 번째 CSV 파일 (실제로는 다른 파일)
+    csv1_path = "DAT_SUVR_2024-12-12_old.csv"  # 첫 번째 CSV 파일
+    csv2_path = "CT_PET_DAT_SUVR_2.1.2_new.csv"  # 두 번째 CSV 파일
     output_path = f"comparison_result_{timestamp}.xlsx"
 
     # 비교 실행 (14번째 컬럼부터 비교)
