@@ -1,4 +1,4 @@
-# AD/ARIAH/compare_data.py
+# AD30/ARIAH/compare_data.py
 import pandas as pd
 from AD20.ARIAH.core import (
     create_location_key_mapping,

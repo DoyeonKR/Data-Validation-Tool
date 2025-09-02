@@ -6,54 +6,57 @@ import time
 from fastapi.responses import FileResponse
 from datetime import datetime
 
-from AD.T1.read_data import read_data as read_data_t1
-from AD.T1.compare_data import compare_data as compare_data_t1
-from AD.T1.save_to_excel import save_to_excel as save_to_excel_t1
-from AD.T2.read_data import read_data as read_data_t2
-from AD.T2.compare_data import compare_data as compare_data_t2
-from AD.T2.save_to_excel import save_to_excel as save_to_excel_t2
-from AD.Tau.read_data import read_data as read_data_tau
-from AD.Tau.compare_data import compare_data as compare_data_tau
-from AD.Tau.save_to_excel import save_to_excel as save_to_excel_tau
-from AD.Amyloid.read_data import read_data as read_data_amyloid
-from AD.Amyloid.compare_data import compare_data as compare_data_amyloid
-from AD.Amyloid.save_to_excel import save_to_excel as save_to_excel_amyloid
-from PET.DAT.read_data import read_data as read_data_petDAT
-from PET.DAT.compare_data import compare_data as compare_data_petDAT
-from PET.DAT.save_to_excel import save_to_excel as save_to_excel_petDAT
-from PET.General.read_data import read_data as read_data_petgeneral
-from PET.General.compare_data import compare_data as compare_data_petgeneral
-from PET.General.save_to_excel import save_to_excel as save_to_excel_petgeneral
-from PET.Amyloid.read_data import read_data as read_data_petAmyloid
-from PET.Amyloid.compare_data import compare_data as compare_data_petAmyloid
-from PET.Amyloid.save_to_excel import save_to_excel as save_to_excel_petAmyloid
-from PET.FDG.read_data import read_data as read_data_petFDG
-from PET.FDG.compare_data import compare_data as compare_data_petFDG
-from PET.FDG.save_to_excel import save_to_excel as save_to_excel_petFDG
-from PET.Tau.read_data import read_data as read_data_petTau
-from PET.Tau.compare_data import compare_data as compare_data_petTau
-from PET.Tau.save_to_excel import save_to_excel as save_to_excel_petTau
-from CTP.save_to_excel import save_to_excel as save_to_excel_ctp
-from CTP.compare_data import compare_data as compare_data_ctp
-from CTP.read_data import read_data as read_data_ctp
-from AD.Normative.compare_data import compare_data as compare_data_normative
-from AD.Normative.read_data import read_data as read_data_normative
-from AD.Normative.save_to_excel import save_to_excel as save_to_excel_normative
-from AD.ARIAE.compare_data import compare_data as compare_data_ariaE
-from AD.ARIAE.read_data import read_data as read_data_ariaE
-from AD.ARIAE.save_to_excel import save_to_excel as save_to_excel_ariaE
+from AD30.T1.read_data import read_data as read_data_t1
+from AD30.T1.compare_data import compare_data as compare_data_t1
+from AD30.T1.save_to_excel import save_to_excel as save_to_excel_t1
+from AD30.T2.read_data import read_data as read_data_t2
+from AD30.T2.compare_data import compare_data as compare_data_t2
+from AD30.T2.save_to_excel import save_to_excel as save_to_excel_t2
+from AD30.Tau.read_data import read_data as read_data_tau
+from AD30.Tau.compare_data import compare_data as compare_data_tau
+from AD30.Tau.save_to_excel import save_to_excel as save_to_excel_tau
+from AD30.Amyloid.read_data import read_data as read_data_amyloid
+from AD30.Amyloid.compare_data import compare_data as compare_data_amyloid
+from AD30.Amyloid.save_to_excel import save_to_excel as save_to_excel_amyloid
+from PET21.DAT.read_data import read_data as read_data_petDAT
+from PET21.DAT.compare_data import compare_data as compare_data_petDAT
+from PET21.DAT.save_to_excel import save_to_excel as save_to_excel_petDAT
+from PET21.General.read_data import read_data as read_data_petgeneral
+from PET21.General.compare_data import compare_data as compare_data_petgeneral
+from PET21.General.save_to_excel import save_to_excel as save_to_excel_petgeneral
+from PET21.Amyloid.read_data import read_data as read_data_petAmyloid
+from PET21.Amyloid.compare_data import compare_data as compare_data_petAmyloid
+from PET21.Amyloid.save_to_excel import save_to_excel as save_to_excel_petAmyloid
+from PET21.FDG.read_data import read_data as read_data_petFDG
+from PET21.FDG.compare_data import compare_data as compare_data_petFDG
+from PET21.FDG.save_to_excel import save_to_excel as save_to_excel_petFDG
+from PET21.Tau.read_data import read_data as read_data_petTau
+from PET21.Tau.compare_data import compare_data as compare_data_petTau
+from PET21.Tau.save_to_excel import save_to_excel as save_to_excel_petTau
+from CTP10.save_to_excel import save_to_excel as save_to_excel_ctp
+from CTP10.compare_data import compare_data as compare_data_ctp
+from CTP10.read_data import read_data as read_data_ctp
+from AD30.Normative.compare_data import compare_data as compare_data_normative
+from AD30.Normative.read_data import read_data as read_data_normative
+from AD30.Normative.save_to_excel import save_to_excel as save_to_excel_normative
+from AD30.ARIAE.compare_data import compare_data as compare_data_ariaE
+from AD30.ARIAE.read_data import read_data as read_data_ariaE
+from AD30.ARIAE.save_to_excel import save_to_excel as save_to_excel_ariaE
 from AD20.Tau.read_data import read_data as read_data_ad20tau
 from AD20.Tau.compare_data import compare_data as compare_data_ad20tau
 from AD20.Tau.save_to_excel import save_to_excel as save_to_excel_ad20tau
 from AD20.Flair.read_data import read_data as read_data_ad20flair
 from AD20.Flair.compare_data import compare_data as compare_data_ad20flair
 from AD20.Flair.save_to_excel import save_to_excel as save_to_excel_ad20flair
-from MRA.handlers import read_data as read_data_mra
-from MRA.handlers import compare_data as compare_data_mra
-from MRA.handlers import save_to_excel as save_to_excel_mra
+from MRA10.handlers import read_data as read_data_mra
+from MRA10.handlers import compare_data as compare_data_mra
+from MRA10.handlers import save_to_excel as save_to_excel_mra
 from AD20.ARIAH.read_data import read_data as read_data_ariah
 from AD20.ARIAH.compare_data import compare_data as compare_data_ariah
 from AD20.ARIAH.save_to_excel import save_to_excel as save_to_excel_ariah
+from AQ32.t1.read_data import read_data as read_data_aq_t1
+from AQ32.t1.compare_data import compare_data as compare_data_aq_t1
+from AQ32.t1.save_to_excel import save_to_excel as save_to_excel_aq_t1
 
 
 app = FastAPI(title="Engine Data Validation API",
@@ -239,84 +242,84 @@ async def root():
     return {"message": "ngrok 테스트 서버 실행 중"}
 
 
-@app.post("/AD/T1/")
+@app.post("/AD30/T1/")
 async def compare_files_t1(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "AD_T1", read_data_t1, compare_data_t1, save_to_excel_t1)
 
-@app.post("/AD/T2/")
+@app.post("/AD30/T2/")
 async def compare_files_t2(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "AD_T2", read_data_t2, compare_data_t2, save_to_excel_t2)
 
-@app.post("/AD/Tau/")
+@app.post("/AD30/Tau/")
 async def compare_files_tau(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "AD_Tau", read_data_tau, compare_data_tau, save_to_excel_tau)
 
-@app.post("/AD/Amyloid/")
+@app.post("/AD30/Amyloid/")
 async def compare_files_amyloid(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "AD_Amyloid", read_data_amyloid, compare_data_amyloid, save_to_excel_amyloid)
 
-@app.post("/AD/Normative/")
+@app.post("/AD30/Normative/")
 async def compare_files_normative(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "AD_Normative", read_data_normative, compare_data_normative, save_to_excel_normative)
 
-@app.post("/AD/ARIAE/")
+@app.post("/AD30/ARIAE/")
 async def compare_files_ariaE(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "AD_ARIAE", read_data_ariaE, compare_data_ariaE, save_to_excel_ariaE)
 
-@app.post("/PET/DAT/")
+@app.post("/PET21/DAT/")
 async def compare_files_dat_suvr(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "PET_DAT", read_data_petDAT, compare_data_petDAT, save_to_excel_petDAT)
 
-@app.post("/PET/General/")
+@app.post("/PET21/General/")
 async def compare_files_general(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "PET_General", read_data_petgeneral, compare_data_petgeneral, save_to_excel_petgeneral)
 
-@app.post("/PET/Amyloid/")
+@app.post("/PET21/Amyloid/")
 async def compare_files_amyloid(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "PET_Amyloid", read_data_petAmyloid, compare_data_petAmyloid, save_to_excel_petAmyloid)
 
-@app.post("/PET/FDG/")
+@app.post("/PET21/FDG/")
 async def compare_files_fdg(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "PET_FDG", read_data_petFDG, compare_data_petFDG, save_to_excel_petFDG)
 
-@app.post("/PET/Tau/")
+@app.post("/PET21/Tau/")
 async def compare_files_tau(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
 ):
     return await process_comparison(csv_file, excel_file, "PET_Tau", read_data_petTau, compare_data_petTau, save_to_excel_petTau)
 
-@app.post("/CTP/CT/")
+@app.post("/CTP10/CT/")
 async def compare_files_ctp(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...)
@@ -353,7 +356,7 @@ async def compare_files_ariah(
     )
 
 
-@app.post("/MRA/")
+@app.post("/MRA10/")
 async def compare_files_scale_mra(
     csv_file: UploadFile = File(...),
     excel_file: UploadFile = File(...),
@@ -361,10 +364,23 @@ async def compare_files_scale_mra(
     return await process_comparison(
         csv_file,
         excel_file,
-        "MRA",
+        "MRA10",
         read_data_mra,       # (csv_path, excel_path) -> (csv_df, excel_df_filtered)
         compare_data_mra,    # (csv_df, excel_df_filtered) -> (results_df, rois)
         save_to_excel_mra,   # (results_df, file_path, rois) -> None
+    )
+@app.post("/AQ32/T1")
+async def compare_files_scale_mra(
+    csv_file: UploadFile = File(...),
+    excel_file: UploadFile = File(...),
+):
+    return await process_comparison(
+        csv_file,
+        excel_file,
+        "AQ_T1",
+        read_data_aq_t1,       # (csv_path, excel_path) -> (csv_df, excel_df_filtered)
+        compare_data_aq_t1,    # (csv_df, excel_df_filtered) -> (results_df, rois)
+        save_to_excel_aq_t1,   # (results_df, file_path, rois) -> None
     )
 
 if __name__ == "__main__":
