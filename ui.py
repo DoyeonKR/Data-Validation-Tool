@@ -106,7 +106,7 @@ def setup_frame(frame, frame_name, read_data, compare_data, save_to_excel):
     progress_bar = ttk.Progressbar(content_frame, mode='indeterminate')
 
 def create_ui(root):
-    root.title("AD DataSet Compare")
+    root.title("AD30 DataSet Compare")
     root.geometry("390x500")
     root.resizable(False, False)
 

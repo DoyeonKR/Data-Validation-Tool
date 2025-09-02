@@ -1,6 +1,6 @@
 import io
 import pandas as pd
-from AQ.t1.mapping_dict import mapping_dict
+from AQ32.t1.mapping_dict import mapping_dict
 
 
 def _read_csv_robust(path: str) -> pd.DataFrame:

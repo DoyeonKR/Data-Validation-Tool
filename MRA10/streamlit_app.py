@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from datetime import date
 
 # ======== 0. 보고서 정보 변수 ========
-App_VERSION = "Neurophet SCALE MRA 1.0.0 (23.23.25172)"
+App_VERSION = "Neurophet SCALE MRA10 1.0.0 (23.23.25172)"
 Engine_VERSION = "Engine v1.0.0 (25.15.25158)"
 AUTHOR = "김도연B"
 UPDATED_DATE = date.today().strftime("%Y-%m-%d")
@@ -19,8 +19,8 @@ if not os.path.exists("MRA_Validation.xlsx"):
 df = pd.read_excel("MRA_Validation.xlsx", dtype=str).fillna('-')
 
 # ======== 2. 기본 페이지 설정 ========
-st.set_page_config(page_title="🧠 MRA Validation 대시보드", layout="wide")
-st.title("🧠 SCALE MRA Engine Validation")
+st.set_page_config(page_title="🧠 MRA10 Validation 대시보드", layout="wide")
+st.title("🧠 SCALE MRA10 Engine Validation")
 
 # ======== 📄 보고서 정보 표시 ========
 st.markdown(f"""
@@ -29,7 +29,7 @@ st.markdown(f"""
 </small>
 """, unsafe_allow_html=True)
 
-st.markdown("MRA Engine Data Validation 결과를 환자별, 결과별로 분석할 수 있습니다.")
+st.markdown("MRA10 Engine Data Validation 결과를 환자별, 결과별로 분석할 수 있습니다.")
 
 # ======== 3. 필터 UI ========
 patient_options = ['전체'] + sorted(df['Patient ID'].unique().tolist())

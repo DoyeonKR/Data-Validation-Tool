@@ -1,4 +1,4 @@
-# AD/ARIAH/core.py
+# AD30/ARIAH/core.py
 import pandas as pd
 import re
 from datetime import datetime
