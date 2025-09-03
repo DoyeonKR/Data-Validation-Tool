@@ -1,7 +1,7 @@
 import pandas as pd
 from tqdm import tqdm
 import time
-from mapping_dict import mapping_dict  # 딕셔너리형 매핑 테이블 불러오기
+from mapping_dict_t1 import mapping_dict  # 딕셔너리형 매핑 테이블 불러오기
 from datetime import datetime
 
 # 1. 파일 경로 설정
