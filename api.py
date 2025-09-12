@@ -74,7 +74,6 @@ SAVE_DIR = "./download"
 # ngrok 프로세스를 저장할 전역 변수
 ngrok_process = None
 
-
 def start_ngrok():
     """ngrok 프로세스를 시작합니다."""
     global ngrok_process
